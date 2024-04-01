@@ -6,31 +6,32 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import ru.dmitry.crud_boot.model.User;
 import ru.dmitry.crud_boot.service.UserService;
+import ru.dmitry.crud_boot.service.UserServiceImpl;
 
 @Controller
 @RequestMapping("/users")
 public class UserController {
-    private final UserService userService;
+    private final UserService userServiceImpl;
 
     @Autowired
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(UserServiceImpl userServiceImpl) {
+        this.userServiceImpl = userServiceImpl;
     }
 
     @GetMapping("/get-all")
     public String getAllUsers(@RequestParam(value = "id", required = false) Integer id, Model model) {
         if (id != null) {
-            model.addAttribute("user", userService.findOne(id));
+            model.addAttribute("user", userServiceImpl.findOne(id));
             return "views/showone";
         } else {
-            model.addAttribute("users", userService.findAll());
+            model.addAttribute("users", userServiceImpl.findAll());
             return "views/showusers";
         }
     }
 
     @GetMapping("/delete")
     public String deleteUser(@RequestParam(value = "id", required = false) Integer id) {
-        userService.delete(id);
+        userServiceImpl.delete(id);
         return "redirect:/users/get-all";
     }
 
@@ -41,7 +42,7 @@ public class UserController {
 
     @PostMapping()
     public String addNewUser(@ModelAttribute("user") User user) {
-        userService.save(user);
+        userServiceImpl.save(user);
         return "redirect:/users/get-all";
     }
 
@@ -52,7 +53,7 @@ public class UserController {
 
     @PatchMapping()
     public String editUser(@ModelAttribute("user") User user, @RequestParam(value = "id", required = false) Integer id) {
-        userService.update(id, user);
+        userServiceImpl.update(id, user);
         return "redirect:/users/get-all";
     }
 }
